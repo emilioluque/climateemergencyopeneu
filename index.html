@@ -118,6 +118,7 @@
     color:var(--ink-soft); background:var(--soft); border-radius:6px; padding:3px 8px 3px 7px;
   }
   .tdot i{width:8px; height:8px; border-radius:50%; background:var(--c); flex:none;}
+  .tdot.cross{background:transparent; border:1px dashed var(--line-strong); color:var(--ink-faint); padding:3px 9px; font-style:italic;}
 
   .check{
     position:absolute; top:-9px; right:-9px; width:24px; height:24px; border-radius:50%;
@@ -220,7 +221,7 @@
       <div class="legend">
         <div class="lab">Mentions — tap to highlight contributing courses</div>
         <div class="legend-row" id="legend"></div>
-        <div class="hint">Each course is tagged with the mentions it counts toward. Reach 25 ECTS in a theme to earn that mention.</div>
+        <div class="hint">Coloured tags are the four mentions you can earn at 25 ECTS each. <i>Emerging &amp; cross-cutting</i> appears on some courses as a shared theme, but it is not a mention.</div>
       </div>
       <div id="catalogue"></div>
     </main>
@@ -272,9 +273,9 @@ const MENTIONS = [
   {key:"socio",   name:"Socio-Ecological",          c:"var(--m-socio)",   soft:"var(--m-socio-soft)"},
   {key:"policy",  name:"Policy & Institution",      c:"var(--m-policy)",  soft:"var(--m-policy-soft)"},
   {key:"culture", name:"Culture & Communication",   c:"var(--m-culture)", soft:"var(--m-culture-soft)"},
-  {key:"emerg",   name:"Emerging & Cross-cutting",  c:"var(--m-emerg)",   soft:"var(--m-emerg-soft)"},
 ];
 const M = Object.fromEntries(MENTIONS.map(m=>[m.key,m]));
+const CROSS = {key:"emerg", name:"Emerging & cross-cutting"};  // a shared theme, not an earnable mention
 
 const UNIS = [
   {key:"FernUni",    label:"FernUni",    sub:"FernUniversität in Hagen"},
@@ -340,7 +341,11 @@ function buildCatalogue(){
     const ects = list.reduce((s,c)=>s+c.ects,0);
     const initials = u.label.slice(0,2).toUpperCase();
     const cards = list.map(c=>{
-      const dots = c.m.map(k=>`<span class="tdot" style="--c:${M[k].c};--soft:${M[k].soft}"><i></i>${M[k].name}</span>`).join("");
+      const order = c.m.filter(k=>k!==CROSS.key).concat(c.m.includes(CROSS.key)?[CROSS.key]:[]);
+      const dots = order.map(k=>{
+        if(k===CROSS.key) return `<span class="tdot cross">${CROSS.name}</span>`;
+        return `<span class="tdot" style="--c:${M[k].c};--soft:${M[k].soft}"><i></i>${M[k].name}</span>`;
+      }).join("");
       return `<button class="card" data-no="${c.no}" aria-pressed="false">
         <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
         <span class="top"><span class="title">${c.title}</span><span class="ects-tag">${c.ects} ECTS</span></span>
