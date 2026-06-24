@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build your pathway · Sustainability Programme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#F2F3EF;
+    --paper:#FFFFFF;
+    --ink:#1B2430;
+    --ink-soft:#5A6573;
+    --ink-faint:#8C95A1;
+    --line:#E2E4DE;
+    --line-strong:#CDD0C8;
+    --valid:#1F7A57;
+    --valid-soft:#E4F1EB;
+    --warn-soft:#FBEFE2;
+
+    /* mention palette */
+    --m-econ:#BD7A1E;     --m-econ-soft:#F6ECDA;
+    --m-socio:#3C8F52;    --m-socio-soft:#E5F1E5;
+    --m-policy:#3B53B8;   --m-policy-soft:#E5E9F7;
+    --m-culture:#B23D72;  --m-culture-soft:#F8E6EF;
+    --m-emerg:#1E8E9B;    --m-emerg-soft:#DFF0F1;
+
+    --radius:14px;
+    --shadow:0 1px 2px rgba(27,36,48,.04), 0 8px 24px rgba(27,36,48,.06);
+    --shadow-lift:0 2px 6px rgba(27,36,48,.08), 0 16px 40px rgba(27,36,48,.12);
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Space Grotesk','Inter',sans-serif; margin:0; letter-spacing:-.01em;}
+  a{color:var(--valid);}
+
+  .wrap{max-width:1240px; margin:0 auto; padding:0 22px;}
+
+  /* ---------- Header ---------- */
+  header.top{padding:38px 0 18px;}
+  .eyebrow{
+    font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--ink-faint);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::after{content:""; height:1px; flex:1; background:var(--line-strong);}
+  header.top h1{font-size:clamp(28px,4vw,42px); font-weight:600; margin:14px 0 10px; max-width:18ch;}
+  header.top p{color:var(--ink-soft); max-width:62ch; margin:0; font-size:15.5px;}
+
+  /* ---------- Layout ---------- */
+  .grid{display:grid; grid-template-columns:1fr 384px; gap:28px; align-items:start; padding-bottom:80px;}
+  @media (max-width:980px){ .grid{grid-template-columns:1fr;} }
+
+  /* ---------- Legend ---------- */
+  .legend{
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px 18px; margin:22px 0 18px; box-shadow:var(--shadow);
+  }
+  .legend .lab{font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:11px;}
+  .legend-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .mchip{
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
+    border:1px solid var(--line-strong); background:var(--paper); color:var(--ink-soft);
+    padding:6px 12px 6px 10px; border-radius:999px; font-size:13px; font-weight:500;
+    transition:background .15s,border-color .15s,color .15s,transform .1s;
+  }
+  .mchip:hover{transform:translateY(-1px);}
+  .mchip .dot{width:11px; height:11px; border-radius:50%; flex:none; background:var(--c);}
+  .mchip[aria-pressed="true"]{background:var(--soft); border-color:var(--c); color:var(--ink);}
+  .legend .hint{font-size:12.5px; color:var(--ink-faint); margin-top:11px;}
+
+  /* ---------- University blocks ---------- */
+  .uni{margin-bottom:30px;}
+  .uni-head{display:flex; align-items:center; gap:13px; margin:0 2px 14px;}
+  .uni-badge{
+    width:38px; height:38px; border-radius:11px; flex:none;
+    display:grid; place-items:center; font-family:'Space Grotesk',sans-serif;
+    font-weight:600; font-size:13px; letter-spacing:.02em;
+    background:#fff; border:1.5px solid var(--line-strong); color:var(--ink-soft);
+  }
+  .uni-head h2{font-size:19px; font-weight:600;}
+  .uni-head .meta{font-size:12.5px; color:var(--ink-faint); margin-top:1px; font-weight:500;}
+
+  .cards{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:560px){ .cards{grid-template-columns:1fr;} }
+
+  .card{
+    position:relative; text-align:left; cursor:pointer; font:inherit; color:inherit;
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    padding:15px 15px 13px; box-shadow:var(--shadow);
+    transition:border-color .15s, box-shadow .15s, transform .12s, opacity .18s;
+    display:flex; flex-direction:column; min-height:118px;
+  }
+  .card:hover{box-shadow:var(--shadow-lift); transform:translateY(-2px);}
+  .card:focus-visible{outline:3px solid var(--valid); outline-offset:2px;}
+  .card[aria-pressed="true"]{border-color:var(--valid); border-width:1.5px; background:linear-gradient(180deg,var(--valid-soft),#fff 60%);}
+  .card.dim{opacity:.34;}
+  .card.match{border-color:var(--line-strong); box-shadow:0 0 0 2px var(--hl) inset, var(--shadow);}
+
+  .card .top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px;}
+  .card .title{font-size:14.5px; font-weight:600; line-height:1.32; letter-spacing:-.005em;}
+  .ects-tag{
+    flex:none; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12px;
+    background:var(--canvas); color:var(--ink-soft); border-radius:7px; padding:3px 8px; white-space:nowrap;
+  }
+  .card[aria-pressed="true"] .ects-tag{background:#fff; color:var(--valid);}
+  .card .dots{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto;}
+  .tdot{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:500;
+    color:var(--ink-soft); background:var(--soft); border-radius:6px; padding:3px 8px 3px 7px;
+  }
+  .tdot i{width:8px; height:8px; border-radius:50%; background:var(--c); flex:none;}
+
+  .check{
+    position:absolute; top:-9px; right:-9px; width:24px; height:24px; border-radius:50%;
+    background:var(--valid); color:#fff; display:grid; place-items:center;
+    transform:scale(0); transition:transform .18s cubic-bezier(.3,1.4,.5,1); box-shadow:0 2px 6px rgba(31,122,87,.4);
+  }
+  .card[aria-pressed="true"] .check{transform:scale(1);}
+  .check svg{width:13px; height:13px;}
+
+  /* ---------- Status panel ---------- */
+  .panel{position:sticky; top:18px; display:flex; flex-direction:column; gap:14px;}
+  @media (max-width:980px){ .panel{position:static;} }
+
+  .card-box{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);}
+  .panel-head{padding:18px 20px 14px;}
+  .panel-head .row{display:flex; justify-content:space-between; align-items:baseline;}
+  .panel-head h2{font-size:16px; font-weight:600;}
+  .reset{
+    background:none; border:none; color:var(--ink-faint); font:inherit; font-size:12.5px;
+    cursor:pointer; padding:4px 6px; border-radius:6px; font-weight:500;
+  }
+  .reset:hover{color:var(--ink); background:var(--canvas);}
+  .reset:disabled{opacity:.4; cursor:default;}
+
+  .ects-big{display:flex; align-items:baseline; gap:9px; margin-top:8px;}
+  .ects-big b{font-family:'Space Grotesk',sans-serif; font-size:38px; font-weight:600; line-height:1; letter-spacing:-.02em;}
+  .ects-big span{font-size:13px; color:var(--ink-faint);}
+
+  .mincredits{margin:15px 20px 2px;}
+  .mincredits .mrow{display:flex; align-items:center; gap:9px; margin-bottom:7px;}
+  .mincredits .mname{font-size:11.5px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint);}
+  .mincredits .mval{margin-left:auto; font-size:12.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; font-weight:500;}
+  .mincredits .mval b{color:var(--ink); font-weight:600;}
+  .bigtrack{height:10px; border-radius:6px; background:var(--canvas); border:1px solid var(--line); overflow:hidden;}
+  .bigfill{height:100%; width:0; background:var(--line-strong); border-radius:6px; transition:width .3s ease, background .3s ease;}
+  .mincredits.met .bigtrack{border-color:var(--valid);}
+  .mincredits.met .bigfill{background:var(--valid);}
+  .creditbadge{font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff; background:var(--valid); border-radius:5px; padding:2px 7px;}
+
+  .banner{
+    margin:0 20px 18px; border-radius:11px; padding:12px 14px; display:flex; gap:11px; align-items:flex-start;
+    background:var(--warn-soft); font-size:13px; line-height:1.4;
+  }
+  .banner.ok{background:var(--valid-soft);}
+  .banner .ic{flex:none; width:20px; height:20px; border-radius:50%; display:grid; place-items:center; margin-top:1px;
+    background:#E9A24A; color:#fff; font-weight:700; font-size:13px; font-family:'Space Grotesk',sans-serif;}
+  .banner.ok .ic{background:var(--valid);}
+  .banner b{font-weight:600;}
+  .banner .sub{color:var(--ink-soft); margin-top:2px;}
+
+  .sect-title{font-size:11.5px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint);
+    padding:0 20px; margin:2px 0 13px;}
+
+  /* universities requirement */
+  .uni-req{padding:16px 20px 20px; border-top:1px solid var(--line);}
+  .uni-marks{display:grid; grid-template-columns:1fr 1fr; gap:9px;}
+  .umark{display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:10px; border:1px solid var(--line); background:var(--canvas); transition:.18s;}
+  .umark .ring{width:22px; height:22px; border-radius:50%; flex:none; border:2px solid var(--line-strong); display:grid; place-items:center; transition:.18s;}
+  .umark .ring svg{width:11px; height:11px; opacity:0; transform:scale(.4); transition:.2s;}
+  .umark .nm{font-size:13px; font-weight:500; color:var(--ink-soft);}
+  .umark.done{background:var(--valid-soft); border-color:#BFE0D2;}
+  .umark.done .ring{background:var(--valid); border-color:var(--valid);}
+  .umark.done .ring svg{opacity:1; transform:scale(1); color:#fff;}
+  .umark.done .nm{color:var(--ink);}
+
+  /* mention meters */
+  .mentions{padding:16px 20px 8px; border-top:1px solid var(--line);}
+  .meter{margin-bottom:17px;}
+  .meter:last-child{margin-bottom:9px;}
+  .meter .mrow{display:flex; align-items:center; gap:9px; margin-bottom:7px;}
+  .meter .mname{font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:8px;}
+  .meter .mname i{width:9px; height:9px; border-radius:50%; background:var(--c); flex:none;}
+  .meter .mval{margin-left:auto; font-size:12.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; font-weight:500;}
+  .meter .mval b{color:var(--ink); font-weight:600;}
+  .earned{font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff; background:var(--c); border-radius:5px; padding:2px 7px;}
+  .track{height:9px; border-radius:6px; background:var(--canvas); border:1px solid var(--line); overflow:hidden; display:flex; gap:1.5px; padding:0;}
+  .seg{height:100%; background:var(--c); opacity:.92; transition:width .25s ease;}
+  .seg:first-child{border-radius:5px 0 0 5px;} .seg:last-child{border-radius:0 5px 5px 0;}
+  .meter.is-earned .track{border-color:var(--c);}
+
+  footer{padding:26px 0 60px; color:var(--ink-faint); font-size:12.5px; border-top:1px solid var(--line); }
+  footer .wrap{display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;}
+
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important;} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">Joint Sustainability Programme · Course planner</div>
+    <h1>Build a valid course pathway.</h1>
+    <p>Select the courses you want to take. The planner checks the programme rules live: enrol in at least <b>45 ECTS</b> in total, take at least one course from <b>every partner university</b>, and earn a <b>mention</b> in any theme where your selection reaches <b>25 ECTS</b>. Courses can count toward more than one mention.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <!-- LEFT: catalogue -->
+    <main>
+      <div class="legend">
+        <div class="lab">Mentions — tap to highlight contributing courses</div>
+        <div class="legend-row" id="legend"></div>
+        <div class="hint">Each course is tagged with the mentions it counts toward. Reach 25 ECTS in a theme to earn that mention.</div>
+      </div>
+      <div id="catalogue"></div>
+    </main>
+
+    <!-- RIGHT: live status -->
+    <aside class="panel">
+      <div class="card-box">
+        <div class="panel-head">
+          <div class="row">
+            <h2>Your pathway</h2>
+            <button class="reset" id="reset" disabled>Clear all</button>
+          </div>
+          <div class="ects-big"><b id="totalEcts">0</b><span>ECTS selected · <span id="courseCount">0</span> courses</span></div>
+          <div class="mincredits" id="minCredits">
+            <div class="mrow">
+              <span class="mname">Minimum enrolment</span>
+              <span class="mval" id="minVal"><b>0</b> / 45 ECTS</span>
+            </div>
+            <div class="bigtrack"><div class="bigfill" id="minFill"></div></div>
+          </div>
+        </div>
+        <div class="banner" id="banner">
+          <div class="ic" id="bannerIc">!</div>
+          <div><b id="bannerTitle">Nothing selected yet</b><div class="sub" id="bannerSub">Pick at least one course from each university to make a valid selection.</div></div>
+        </div>
+
+        <div class="uni-req">
+          <div class="sect-title" style="padding:0; margin-bottom:12px;">University rule · one from each</div>
+          <div class="uni-marks" id="uniMarks"></div>
+        </div>
+
+        <div class="mentions">
+          <div class="sect-title" style="padding:0; margin-bottom:14px;">Mentions · 25 ECTS each</div>
+          <div id="meters"></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<footer><div class="wrap">
+  <span>Course planner · selection saved in this browser</span>
+  <span>FernUni · UNED · Aberta · Daugavpils</span>
+</div></footer>
+
+<script>
+const MENTIONS = [
+  {key:"econ",    name:"Economic & Business",       c:"var(--m-econ)",    soft:"var(--m-econ-soft)"},
+  {key:"socio",   name:"Socio-Ecological",          c:"var(--m-socio)",   soft:"var(--m-socio-soft)"},
+  {key:"policy",  name:"Policy & Institution",      c:"var(--m-policy)",  soft:"var(--m-policy-soft)"},
+  {key:"culture", name:"Culture & Communication",   c:"var(--m-culture)", soft:"var(--m-culture-soft)"},
+  {key:"emerg",   name:"Emerging & Cross-cutting",  c:"var(--m-emerg)",   soft:"var(--m-emerg-soft)"},
+];
+const M = Object.fromEntries(MENTIONS.map(m=>[m.key,m]));
+
+const UNIS = [
+  {key:"FernUni",    label:"FernUni",    sub:"FernUniversität in Hagen"},
+  {key:"UNED",       label:"UNED",       sub:"Madrid, Spain"},
+  {key:"Aberta",     label:"Aberta",     sub:"Universidade Aberta"},
+  {key:"Daugavpils", label:"Daugavpils", sub:"Daugavpils University"},
+];
+
+const COURSES = [
+  {no:1,  uni:"FernUni",    ects:10, title:"Sustainable Energy Economics",                        m:["econ","policy"]},
+  {no:2,  uni:"FernUni",    ects:10, title:"Social Sustainability",                                m:["econ","socio"]},
+  {no:3,  uni:"FernUni",    ects:10, title:"Environmental & Resource Economics",                   m:["econ","socio"]},
+  {no:4,  uni:"FernUni",    ects:10, title:"Intercultural Psychology & Sustainability",            m:["culture","emerg"]},
+  {no:5,  uni:"UNED",       ects:5,  title:"International & European Climate Law",                  m:["policy"]},
+  {no:6,  uni:"UNED",       ects:5,  title:"Impacts, Risks & Social/Environmental Vulnerability",  m:["socio","policy"]},
+  {no:7,  uni:"UNED",       ects:5,  title:"Mapping Interventions",                                m:["policy","emerg"]},
+  {no:8,  uni:"UNED",       ects:5,  title:"Communicating the Climate Emergency",                  m:["culture"]},
+  {no:9,  uni:"UNED",       ects:5,  title:"Decarbonising the Built Environment",                  m:["socio","emerg"]},
+  {no:10, uni:"Aberta",     ects:5,  title:"Art, Design & Sustainability",                         m:["culture","emerg"]},
+  {no:11, uni:"Aberta",     ects:5,  title:"Climate Change & Western History",                     m:["policy","culture"]},
+  {no:12, uni:"Aberta",     ects:5,  title:"Artificial Intelligence & Sustainability",             m:["socio","emerg"]},
+  {no:13, uni:"Aberta",     ects:5,  title:"Climate Impact of Urban Form & Transportation",        m:["econ","socio"]},
+  {no:14, uni:"Daugavpils", ects:5,  title:"Culture & Heritage in Sustainability Transitions",     m:["culture","emerg"]},
+  {no:15, uni:"Daugavpils", ects:5,  title:"Transforming Systems for a Resilient Future",          m:["socio","emerg"]},
+  {no:16, uni:"Daugavpils", ects:5,  title:"Sustainable Regional Development & Cooperation",       m:["econ","policy"]},
+  {no:17, uni:"Daugavpils", ects:5,  title:"Food Systems, Soil & Climate Interactions",            m:["socio","policy"]},
+];
+
+const THRESHOLD = 25;
+const STORE_KEY = "pathway.selected.v1";
+
+let selected = new Set();
+let highlight = null; // mention key being highlighted
+
+// ---- persistence (guarded so it never breaks where storage is blocked) ----
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify([...selected])); }catch(e){} }
+function load(){ try{ const r=localStorage.getItem(STORE_KEY); if(r) JSON.parse(r).forEach(n=>selected.add(n)); }catch(e){} }
+
+const $ = s=>document.querySelector(s);
+const courseByNo = Object.fromEntries(COURSES.map(c=>[c.no,c]));
+
+// ---------- build legend ----------
+function buildLegend(){
+  const el = $("#legend");
+  el.innerHTML = MENTIONS.map(m=>
+    `<button class="mchip" data-m="${m.key}" aria-pressed="false" style="--c:${m.c};--soft:${m.soft}">
+       <span class="dot"></span>${m.name}</button>`).join("");
+  el.querySelectorAll(".mchip").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const k = btn.dataset.m;
+      highlight = (highlight===k)? null : k;
+      el.querySelectorAll(".mchip").forEach(b=>b.setAttribute("aria-pressed", b.dataset.m===highlight));
+      applyHighlight();
+    });
+  });
+}
+
+// ---------- build catalogue ----------
+function buildCatalogue(){
+  const cat = $("#catalogue");
+  cat.innerHTML = UNIS.map(u=>{
+    const list = COURSES.filter(c=>c.uni===u.key);
+    const ects = list.reduce((s,c)=>s+c.ects,0);
+    const initials = u.label.slice(0,2).toUpperCase();
+    const cards = list.map(c=>{
+      const dots = c.m.map(k=>`<span class="tdot" style="--c:${M[k].c};--soft:${M[k].soft}"><i></i>${M[k].name}</span>`).join("");
+      return `<button class="card" data-no="${c.no}" aria-pressed="false">
+        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <span class="top"><span class="title">${c.title}</span><span class="ects-tag">${c.ects} ECTS</span></span>
+        <span class="dots">${dots}</span>
+      </button>`;
+    }).join("");
+    return `<section class="uni">
+      <div class="uni-head">
+        <div class="uni-badge">${initials}</div>
+        <div><h2>${u.label}</h2><div class="meta">${u.sub} · ${list.length} courses · ${ects} ECTS available</div></div>
+      </div>
+      <div class="cards">${cards}</div>
+    </section>`;
+  }).join("");
+
+  cat.querySelectorAll(".card").forEach(card=>{
+    card.addEventListener("click",()=>{
+      const no = +card.dataset.no;
+      if(selected.has(no)) selected.delete(no); else selected.add(no);
+      save(); render();
+    });
+  });
+}
+
+// ---------- build status scaffolding ----------
+function buildPanel(){
+  $("#uniMarks").innerHTML = UNIS.map(u=>
+    `<div class="umark" data-u="${u.key}">
+       <span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+       <span class="nm">${u.label}</span></div>`).join("");
+  $("#meters").innerHTML = MENTIONS.map(m=>
+    `<div class="meter" data-m="${m.key}" style="--c:${m.c}">
+       <div class="mrow">
+         <span class="mname"><i></i>${m.name}</span>
+         <span class="mval"><b class="cur">0</b> / 25</span>
+       </div>
+       <div class="track"></div>
+     </div>`).join("");
+}
+
+// ---------- highlight contributing courses ----------
+function applyHighlight(){
+  document.querySelectorAll(".card").forEach(card=>{
+    const c = courseByNo[+card.dataset.no];
+    if(!highlight){ card.classList.remove("dim","match"); card.style.removeProperty("--hl"); return; }
+    if(c.m.includes(highlight)){ card.classList.add("match"); card.classList.remove("dim"); card.style.setProperty("--hl", M[highlight].c); }
+    else { card.classList.add("dim"); card.classList.remove("match"); }
+  });
+}
+
+// ---------- render live state ----------
+function render(){
+  const chosen = [...selected].map(n=>courseByNo[n]);
+  const total = chosen.reduce((s,c)=>s+c.ects,0);
+
+  $("#totalEcts").textContent = total;
+  $("#courseCount").textContent = chosen.length;
+  $("#reset").disabled = chosen.length===0;
+
+  // minimum enrolment rule
+  const MIN = 45;
+  const minOk = total >= MIN;
+  const mc = $("#minCredits");
+  mc.classList.toggle("met", minOk);
+  $("#minFill").style.width = Math.min(total/MIN*100, 100) + "%";
+  $("#minVal").innerHTML = minOk
+    ? `<span class="creditbadge">&#10003; Reached</span> <b>${total}</b> ECTS`
+    : `<b>${total}</b> / ${MIN} ECTS`;
+
+  // cards
+  document.querySelectorAll(".card").forEach(card=>{
+    card.setAttribute("aria-pressed", selected.has(+card.dataset.no));
+  });
+
+  // university rule
+  const covered = new Set(chosen.map(c=>c.uni));
+  UNIS.forEach(u=>{
+    $(`.umark[data-u="${u.key}"]`).classList.toggle("done", covered.has(u.key));
+  });
+  const missing = UNIS.filter(u=>!covered.has(u.key));
+  const uniOk = missing.length===0;
+
+  // mentions
+  const earned = [];
+  MENTIONS.forEach(m=>{
+    const contrib = chosen.filter(c=>c.m.includes(m.key));
+    const sum = contrib.reduce((s,c)=>s+c.ects,0);
+    const meter = $(`.meter[data-m="${m.key}"]`);
+    meter.querySelector(".cur").textContent = sum;
+    const isE = sum>=THRESHOLD;
+    meter.classList.toggle("is-earned", isE);
+    if(isE) earned.push(m.name);
+
+    // value text + badge
+    const val = meter.querySelector(".mval");
+    val.innerHTML = isE
+      ? `<span class="earned">Earned</span> <b class="cur">${sum}</b> ECTS`
+      : `<b class="cur">${sum}</b> / 25 ECTS`;
+
+    // segmented bar — one segment per contributing course, scaled to 25
+    const track = meter.querySelector(".track");
+    track.innerHTML = contrib.map(c=>{
+      const w = Math.min(c.ects/THRESHOLD*100, 100);
+      return `<span class="seg" title="${c.title} · ${c.ects} ECTS" style="width:${w}%"></span>`;
+    }).join("");
+  });
+
+  // banner
+  const banner = $("#banner"), ic=$("#bannerIc"), t=$("#bannerTitle"), s=$("#bannerSub");
+  const valid = uniOk && minOk;
+  if(chosen.length===0){
+    banner.className="banner"; ic.textContent="!";
+    t.textContent="Nothing selected yet";
+    s.textContent="Enrol in at least 45 ECTS, with one course from each university, to make a valid selection.";
+  } else if(!valid){
+    banner.className="banner"; ic.textContent="!";
+    t.textContent="Not valid yet";
+    const needs=[];
+    if(!uniOk) needs.push(`a course from ${missing.map(u=>u.label).join(", ")}`);
+    if(!minOk) needs.push(`${MIN-total} more ECTS (for the 45 minimum)`);
+    s.textContent = "Still needed: " + needs.join(" and ") + ".";
+  } else {
+    banner.className="banner ok"; ic.innerHTML='&#10003;';
+    t.textContent="Valid selection";
+    s.textContent = earned.length
+      ? `45+ ECTS and all universities covered · ${earned.length} mention${earned.length>1?"s":""}: ${earned.join(", ")}.`
+      : "45+ ECTS and all universities covered. Reach 25 ECTS in a theme to earn a mention.";
+  }
+}
+
+// ---- init ----
+load();
+buildLegend();
+buildCatalogue();
+buildPanel();
+render();
+$("#reset").addEventListener("click",()=>{ selected.clear(); save(); render(); });
+</script>
+</body>
+</html>
